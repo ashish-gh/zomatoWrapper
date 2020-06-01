@@ -31,13 +31,13 @@ class Zomato:
         for category in category_string['categories']:
             categories.update({category['categories']['id']: category['categories']['name']})
 
-
         return categories
     
 
+
     def get_cityID(self, city_name):
         """This api provides city details
-        of provided city id.
+        of provided city name.
 
         Parameters:
         """
@@ -50,13 +50,11 @@ class Zomato:
         # joining city name to match url 
         city_name = '%20'.join(city_name)
         
-
         headers= {'Accept':'applicaiton/json', 'user-key': self.user_key}        
         response = (requests.get(self.base_url + "cities?q="+str(city_name), headers=headers).content).decode("utf-8")
         city_string = json.loads(response)
 
         self.is_key_valid(city_string)
-
         
         # checking if passed city name is valid
         try:
@@ -69,7 +67,47 @@ class Zomato:
         except ValueError:
             print("city name is inappropriate.")
 
-    
+        
+    def get_cityName(self, city_id):
+        """This api provides city details
+        of provided city id.
+
+        Parameters:
+        INPUT:
+        city_id : int: Id of city 
+
+        OUTPUT:
+        city_name: str: Name of city id
+        """
+
+        city_id = str(city_id)
+            
+        # checking if city id is numeric
+        try:
+            if city_id.isnumeric() == False:
+                raise ValueError
+        except ValueError:
+            print("city id is invalid.")
+
+        headers= {'Accept':'applicaiton/json', 'user-key': self.user_key}        
+        response = (requests.get(self.base_url + "cities?city_ids="+str(city_id), headers=headers).content).decode("utf-8")
+        city_string = json.loads(response)
+
+        # checking user-key
+        self.is_key_valid(city_string)
+
+        # checking if passed city id is valid
+        try:
+            if (len(city_string['location_suggestions']) == 0):
+                raise ValueError
+            else:
+                for city in city_string['location_suggestions']:
+                    return city['name']
+        except ValueError:
+            print("city id is inappropriate.")
+
+
+
     def is_key_valid(self, response_string):
         """
         """
@@ -80,6 +118,7 @@ class Zomato:
                             
         except ValueError:
             print("user key is not valid")
+        
             
         
 
