@@ -53,19 +53,36 @@ class Zomato:
 
         headers= {'Accept':'applicaiton/json', 'user-key': self.user_key}        
         response = (requests.get(self.base_url + "cities?q="+str(city_name), headers=headers).content).decode("utf-8")
-
         city_string = json.loads(response)
+
+        self.is_key_valid(city_string)
+
         
         # checking if passed city name is valid
         try:
             if (len(city_string['location_suggestions']) == 0):
                 raise ValueError
             else:
-                for city in city_string:
+                for city in city_string['location_suggestions']:
                     return city['id']
 
         except ValueError:
             print("city name is inappropriate.")
+
+    
+    def is_key_valid(self, response_string):
+        """
+        """
+        try:
+            if 'code' in response_string:
+                if response_string['code'] == 403:
+                    raise ValueError
+                            
+        except ValueError:
+            print("user key is not valid")
+            
+        
+
 
 
 
