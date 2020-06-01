@@ -31,9 +31,43 @@ class Zomato:
         for category in category_string['categories']:
             categories.update({category['categories']['id']: category['categories']['name']})
 
-        # print(categories)
 
         return categories
     
+
+    def get_cityID(self, city_name):
+        """This api provides city details
+        of provided city id.
+
+        Parameters:
+        """
+        # converting to lower
+        city_name = city_name.lower()
+
+        # splitting city name
+        city_name = city_name.split(' ')
+
+        # joining city name to match url 
+        city_name = '%20'.join(city_name)
+        
+
+        headers= {'Accept':'applicaiton/json', 'user-key': self.user_key}        
+        response = (requests.get(self.base_url + "cities?q="+str(city_name), headers=headers).content).decode("utf-8")
+
+        city_string = json.loads(response)
+        
+        # checking if passed city name is valid
+        try:
+            if (len(city_string['location_suggestions']) == 0):
+                raise ValueError
+            else:
+                for city in city_string:
+                    return city['id']
+
+        except ValueError:
+            print("city name is inappropriate.")
+
+
+
 
     
