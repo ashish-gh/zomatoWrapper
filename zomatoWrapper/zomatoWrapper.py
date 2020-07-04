@@ -90,15 +90,11 @@ class Zomato:
                 name of city id
         """
 
-        cityId = str(cityId)
-            
         # checking if city id is numeric
-        try:
-            if cityId.isnumeric() == False:
-                raise ValueError
-        except ValueError:
-            print("city id is invalid.")
+        self.checkIsNumeric(cityId)
 
+        cityId = str(cityId)
+                    
         headers= {'Accept':'applicaiton/json', 'user-key': self.user_key}        
         response = (requests.get(self.base_url + "cities?city_ids="+str(cityId), headers=headers).content).decode("utf-8")
         cityString = json.loads(response)
@@ -116,18 +112,116 @@ class Zomato:
         except ValueError:
             print("city id is inappropriate.")
 
+    def getCuisines(self, cityId):
+        """This function returns list of cuisines 
+        of restaurant for specific city.
+        
+        Parameters
+            cityId: ''int''
+                city id for restaurant
 
+        Returns
+            cuisines : ''list''
+                list of cuisines 
+        """
+        
+        # checking if cityId is valid or not
+        self.checkIsNumeric(cityId)
+
+        cityId = str(cityId)
+
+        headers = {'Accept':'application/json', 'user-key': self.user_key}
+        response = (requests.get(self.base_url+ "cuisines?city_id=" + str(cityId), headers=headers).content).decode("utf-8")
+        cusinesString = json.loads(response)
+        
+        # checking status of request
+        self.checkBadStatus(cusinesString)
+
+        # checking if value for provided city is there or not
+        self.checkCuisineForCity(cusinesString, cityId)
+
+        cuisines = {}
+
+        for cuisine in cusinesString["cuisines"]:
+            cuisines.update({cuisine["cuisine"]["cuisine_id"] : cuisine["cuisine"]["cuisine_name"]})
+        
+        return cuisines
+        
     def isKeyValid(self, responseString):
         """
+        This function is used to check if API keyis valid or not
+        
+        Parameter
+            responseString: ''dict''
+                dictonary to hold reponse from API request
+        
+        Return 
+            None
         """
         try:
             if 'code' in responseString:
                 if responseString['code'] == 403:
-                    raise ValueError
+                    raise ValueError 
                             
         except ValueError:
             print("user key is not valid")
+    
+           
+    def checkBadStatus(self, responseString):
+        """
+        This function is used to check if data for given request exists or not.
         
+        Parameter
+            responseString: ''dict''
+                dictonary to hold reponse from API request
+        
+        Return 
+            None
+        """
+        try:
+            if 'code' in responseString:
+                if responseString['code'] == 400:
+                    raise ValueError
+        except ValueError:
+            print("No data found")
+            
+        
+    def checkIsNumeric(self, value):
+        """        
+        This function is used to check if API keyis valid or not
+        
+        Parameter
+            value: ''int/str/boolean'' 
+                input value from user
+        
+        Return 
+            None
+        """
+        try:
+            if isinstance(value, str):
+                raise ValueError
+        except ValueError:
+            print("city id is invalid.")
+
+
+    def checkCuisineForCity(self, responseString, cityId):
+        """
+        This function is used to check cuisines for specific city exists or not
+        
+        Parameter
+            responseString: ''dict''
+                dictonary to hold reponse from API request
+            cityId: ''int''
+                unique city id for city
+        
+        Return 
+            None
+        """
+        try:
+            if len(responseString["cuisines"]) == 0:
+                raise ValueError            
+        except ValueError:
+            print("no data for {}".format(cityId))
             
         
 
