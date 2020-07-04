@@ -9,7 +9,7 @@ class Zomato:
         """Define objects of type Zomato
 
         Parameters:
-        api_key: API key to access https://developers.zomato.com/api/v2.1/
+            api_key: API key to access https://developers.zomato.com/api/v2.1/
 
         """
         self.user_key = user_key
@@ -22,6 +22,10 @@ class Zomato:
         of categories of foods.
         
         Parameters:
+
+        Returns:
+            categories: ''dict''
+                key value pair of categorie id and name
         """        
         headers= {'Accept':'applicaiton/json', 'user-key': self.user_key}
         response = (requests.get(self.base_url + "categories", headers=headers).content).decode("utf-8")
@@ -40,6 +44,11 @@ class Zomato:
         of provided city name.
 
         Parameters:
+            city_name: ''str'
+                name for specific city
+        
+        Return:
+            None
         """
         # converting to lower
         city_name = city_name.lower()
@@ -73,11 +82,12 @@ class Zomato:
         of provided city id.
 
         Parameters:
-        INPUT:
-        city_id : int: Id of city 
+            city_id : ''int'' 
+                city id for specific city 
 
-        OUTPUT:
-        city_name: str: Name of city id
+        Return
+            city_name: ''str''
+                name of city id
         """
 
         city_id = str(city_id)
