@@ -38,9 +38,21 @@ This api provides you the list of categories.
 
 Parameters:
 
-Returns: 
-- category_id - ID of the category type.
-- category_name - Name of the category type.
+Returns: categories ''dict''
+- categoryId - ID of the category type.
+- categoryName - Name of the category type.
 ```python
->>> zomato.get_categoriest()
+>>> zomato.getCategories()
+```
+## CityId Get
+
+This api provides you name.
+
+Parameters: cityName : ''str''
+- cityName - Name of city i.e. Los Angles.
+     
+Returns: cityId ''int''
+- cityId - unique id for city.
+```python
+>>> zomato.getCityID(123)
 ```

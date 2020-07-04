@@ -48,7 +48,8 @@ class Zomato:
                 name for specific city
         
         Return:
-            None
+            cityId : ''int''
+                unique cityId 
         """
         # converting to lower
         cityName = cityName.lower()
